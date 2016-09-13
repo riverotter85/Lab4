@@ -36,7 +36,7 @@ class CircularList : public Drawable
       void remove(int index);
       void set(int index, T* item);
       CircularListIterator<T>* iterator();
-
+      
       void addListener(Update* gui);
       void draw(Cairo::RefPtr<Cairo::Context> cr, int width, int height);
       void mouseClicked(int x, int y);
@@ -63,11 +63,17 @@ DoubleNode<T>* CircularList<T>::find(int index)
  
    if (index >= loc_pos)
    {
+      dist_next = index - loc_pos;
+      dist_prev = loc_pos - index;
+      
                                     //distance without the bridge (next refs, positive)
                                     //distance using the bridge (prev refs, negative)
    }
    else
    {
+      dist_next = loc_pos - index;
+      dist_prev = index - loc_pos;
+      
                                     //distance without the bridge (prev refs, negative)
                                     //distance using the bridge (next refs, positive)
    }
@@ -75,9 +81,13 @@ DoubleNode<T>* CircularList<T>::find(int index)
    //DO THIS which distance is smaller?
    //find the minimum distance using absolute value
    //set min_dist to the smaller value, keeping the sign
-
-
-
+   
+   if (abs(dist_next) <= abs(dist_prev)){
+      min_dist = dist_next;
+   }
+   else{
+      min_dist = dist_prev;
+   }
 
 
 
@@ -302,6 +312,7 @@ void CircularList<T>::addListener(Update* g)
    update_active = 1;
 }
 
+
 template < class T >
 void CircularList<T>::draw(Cairo::RefPtr<Cairo::Context> cr, int width, int height)
 {
@@ -330,7 +341,7 @@ void CircularList<T>::draw(Cairo::RefPtr<Cairo::Context> cr, int width, int heig
    //starting positions-- start at the top of the panel, in the center (y increases downward)
    double x = r + offset;
    double y = offset;
-
+   
    CircularListIterator<T>* iter = iterator();
 
    T* before = NULL;
