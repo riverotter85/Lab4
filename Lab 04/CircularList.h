@@ -1,7 +1,15 @@
+/*
+	Filename: CircularList.h
+	Modified By: Logan Davis & Johnathan Horne
+	Date Modified: 9/16/2016
+*/
+
 #if !defined CIRCULARLIST_H
 #define CIRCULARLIST_H
 
 #include "CircularListIterator.h"
+
+#include <cstdlib> // For abs function
 
 // #include "Drawable.h"
 // #include "Line.h"
@@ -63,11 +71,15 @@ DoubleNode<T>* CircularList<T>::find(int index)
  
    if (index >= loc_pos)
    {
+	  dist_next = index - loc_pos;
+      dist_prev = loc_pos - index;
                                     //distance without the bridge (next refs, positive)
                                     //distance using the bridge (prev refs, negative)
    }
    else
    {
+	  dist_next = loc_pos - index;
+      dist_prev = index - loc_pos;
                                     //distance without the bridge (prev refs, negative)
                                     //distance using the bridge (next refs, positive)
    }
@@ -76,7 +88,12 @@ DoubleNode<T>* CircularList<T>::find(int index)
    //find the minimum distance using absolute value
    //set min_dist to the smaller value, keeping the sign
 
-
+	if (abs(dist_next) <= abs(dist_prev)){
+      min_dist = dist_next;
+   }
+   else{
+      min_dist = dist_prev;
+   }
 
 
 
@@ -142,22 +159,21 @@ void CircularList<T>::remove(int index)
 
       if (sze == 1) //special case
       {
-
-
-
-
-
-
+		delete loc;
+		loc = NULL;
+		loc_pos = 0;
       }
       else
       {
          //use local variables
+		DoubleNode<T>* prev = find(index - 1);
+		DoubleNode<T>* curr = prev->getNext();
+		DoubleNode<T>* next = curr->getNext();
 
-
-
-
-
-
+		prev->setNext(next);
+		next->setPrev(prev);
+		delete curr;
+		loc_pos = index;
       }
       sze--;
    } 
